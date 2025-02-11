@@ -27,12 +27,6 @@ public class Main {
         }
 
         double[][] table = getSimplexTable(sc, F, basis);
-//        double[][] table = new double[][]{
-//                {2, 1, -3, 0, 0, -6, 18},
-//                {-3, 0, 2, 1, 0, -2, 24},
-//                {1, 0, 3, 0, 1, -4, 36},
-//                {-3, 0, -2, 0, 0, 6, 0}
-//        };
         System.out.println("Изначальная симплекс-таблица");
         printTable(table);
 
@@ -48,6 +42,14 @@ public class Main {
             recalculateTable(table, row, col);
             System.out.printf("%nПересчитанная симплекс-таблица%n");
             printTable(table);
+        }
+
+        if (isOptimal(table)) {
+            System.out.println("Решение:");
+
+            for (int i = 0; i < basis.size(); i++) {
+                System.out.printf("x%d = %.2f%n", basis.get(i), table[i][table[i].length - 1]);
+            }
         }
 
         sc.close();
@@ -74,7 +76,7 @@ public class Main {
         }
 
         // Копируем в последнюю строку функцию
-        System.arraycopy(F, 0, result[result.length - 1], 0, 6);
+        System.arraycopy(F, 0, result[result.length - 1], 0, F.length);
 
         return result;
     }
@@ -86,8 +88,8 @@ public class Main {
      * @return {@code true}, если в решении нет отрицательных значений. Иначе {@code false}
      */
     public static boolean isOptimal(double[][] table) {
-        for (int i = 0; i < table[0].length; i++) {
-            if (table[0][i] < 0) {
+        for (int i = 0; i < table[table.length - 1].length; i++) {
+            if (table[table.length - 1][i] < 0) {
                 return false;
             }
         }
@@ -120,7 +122,8 @@ public class Main {
      *
      * @param table симплекс-таблица
      * @param col   индекс ведущего столбца
-     * @return индекс ведущей строки
+     * @return {@code отрицательное 0}, если все элементы ведущего столбца отрицательны,
+     * иначе {@code индекс ведущей строки}
      */
     public static int pivotRowIndex(double[][] table, int col) {
         Double min = null;
@@ -148,9 +151,6 @@ public class Main {
      * @param row   ведущая строка
      */
     public static void recalculateTable(double[][] table, int row, int col) {
-        // Определяем минимальный элемент в строке F
-//        double min = table[table.length - 1][col];
-
         // Определяем ведущий элемент
         double pivotElement = table[row][col];
 
@@ -173,7 +173,7 @@ public class Main {
     public static void printTable(double[][] table) {
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table[i].length; j++) {
-                System.out.printf("%8.1f", table[i][j]);
+                System.out.printf("%8.2f", table[i][j]);
             }
 
             System.out.println();
