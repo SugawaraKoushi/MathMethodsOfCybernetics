@@ -1,4 +1,4 @@
-package vladek.lab1;
+package vladek.lab2;
 
 import java.util.ArrayList;
 import java.util.List;
